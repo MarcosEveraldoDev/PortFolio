@@ -1,3 +1,12 @@
+// Inicializar EmailJS com seu User ID
+(function() {
+    if (typeof emailjs === 'undefined') {
+        console.error('EmailJS não está carregado. Verifique se o script do EmailJS foi incluído no HTML.');
+        return;
+    }
+        emailjs.init("g2sj5A0TRSRAVUp11"); // Substitua por seu User ID do EmailJS
+})();
+
 // Mobile Menu Toggle
 const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
 const navLinks = document.querySelector('.nav-links');
@@ -88,16 +97,44 @@ if (skillsSection) {
     observer.observe(skillsSection);
 }
 
-// Form Submission
+// Form Submission with EmailJS
 const contactForm = document.querySelector('.contact-form form');
 if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        alert('Mensagem enviada com sucesso! Entrarei em contato em breve.');
-        contactForm.reset();
+
+        // Obter valores dos campos
+       const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const subject = document.getElementById('subject').value.trim();
+        const message = document.getElementById('message').value.trim();
+
+        // Validar se todos os campos estão preenchidos
+        if (!name || !email || !subject || !message) {
+            alert('Por favor, preencha todos os campos antes de enviar.');
+            return;
+        }
+
+        // Enviar e-mail usando EmailJS
+        emailjs.send('service_gzv5iw5', 'template_bi1i758', {
+            subject: subject,
+            from_name: name,
+            message: message,
+            from_email: email,
+            to_email: 'marcosdev5411@gmail.com'
+        })
+        .then(() => {
+            alert('Mensagem enviada com sucesso! Entrarei em contato em breve.');
+            contactForm.reset();
+        })
+        .catch((error) => {
+            console.error('Erro ao enviar o e-mail:', error);
+            alert('Ocorreu um erro ao enviar a mensagem. Tente novamente mais tarde.');
+        });
     });
 }
 
+// Typing Effect
 const element = document.getElementById('typing-text');
 
 const texts = [
@@ -119,16 +156,16 @@ function type() {
 
     if (!isDeleting && charIndex < currentText.length) {
         charIndex++;
-        setTimeout(type, 100); // velocidade digitando
+        setTimeout(type, 100); // Velocidade digitando
     } else if (isDeleting && charIndex > 0) {
         charIndex--;
-        setTimeout(type, 50); // velocidade apagando
+        setTimeout(type, 50); // Velocidade apagando
     } else {
         isDeleting = !isDeleting;
         if (!isDeleting) {
             textIndex = (textIndex + 1) % texts.length;
         }
-        setTimeout(type, 1000); // pausa entre troca de textos
+        setTimeout(type, 1000); // Pausa entre troca de textos
     }
 }
 
